@@ -1,6 +1,7 @@
 const url = 'https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json'
 
 let jsondata = [];
+let metadata = [];
 let names = [];
 let value = [];
 let label = [];
@@ -11,6 +12,7 @@ console.log("Data Promise: ", dataPromise);
 
 //Fetch the JSON data and console log it
 d3.json(url).then(function(data){
+    console.log(data);
     for (i = 0; i < data["samples"].length; i++) {
         jsondata.push(data["samples"][i]);
     }
@@ -18,11 +20,16 @@ d3.json(url).then(function(data){
         names.push(data["names"][i]);
     }
 
+    for (i = 0; i < data["metadata"].length; i++) {
+        metadata.push(data["metadata"][i]);
+    }
+
     let drop = d3.select("#selDataset");
     drop.append("option").property("",names[i]).text("Choose ID");
     for (i = 0; i < names.length; i++) {
         drop.append("option").property("value",names[i]).text(names[i]);
     }
+    // console.log(metadata);
 
 });
 
@@ -31,13 +38,19 @@ function optionChanged(dataset) {
     let value = [];
     let label = [];
 
-    // for (i = 0; i < names.length; i++) {
-    //     if (dataset == names[i]) {
-    //         value.push(jsondata[i]["sample_values"].slice(0,10));
-    //         label.push(jsondata[i]["otu_ids"].slice(0,10));
-    //     }
-    // }
-
+    for (i = 0; i < metadata.length; i++) {
+        if (dataset == metadata[i]["id"]) {
+            let panel = d3.selectAll(".panel-body")
+            panel.append("p").text(`id:${metadata[i]["id"]}`);
+            panel.append("p").text(`ethnicity: ${metadata[i]["ethnicity"]}`);
+            panel.append("p").text(`gender: ${metadata[i]["gender"]}`);
+            panel.append("p").text(`age: ${metadata[i]["age"]}`);
+            panel.append("p").text(`location: ${metadata[i]["location"]}`);
+            panel.append("p").text(`bbtype: ${metadata[i]["bbtype"]}`);
+            panel.append("p").text(`wfreq: ${metadata[i]["wfreq"]}`);
+        }
+    }
+    
     for (i = 0; i < names.length; i++) {
         if (dataset == names[i]) {
             value.push(jsondata[i]["sample_values"]);
